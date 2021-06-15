@@ -9,25 +9,21 @@ import (
 	"net/http"
 )
 
-
-
-
-func homePage(w http.ResponseWriter, _ *http.Request)  {
+func homePage(w http.ResponseWriter, _ *http.Request) {
 	_, _ = fmt.Fprintf(w, "Welcome to the HomePage!")
 	fmt.Println("Endpoint Hit: homePage")
 }
 
 type Article struct {
 	Id      string `json:"Id"`
-	Title string `json:"title"`
-	Desc string `json:"desc"`
+	Title   string `json:"title"`
+	Desc    string `json:"desc"`
 	Content string `json:"content"`
 }
 
 var Articles []Article
 
-
-func allArticles(w http.ResponseWriter, _ *http.Request)  {
+func allArticles(w http.ResponseWriter, _ *http.Request) {
 	fmt.Println("Endpoint Hit: allArticles")
 	json.NewEncoder(w).Encode(Articles)
 }
@@ -50,8 +46,7 @@ func createArticle(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(article)
 }
 
-
-func deleteArticle(_ http.ResponseWriter, r *http.Request)  {
+func deleteArticle(_ http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
 	for index, article := range Articles {
@@ -68,7 +63,6 @@ func updateArticle(w http.ResponseWriter, r *http.Request) {
 	for index, article := range Articles {
 		if article.Id == id {
 			Articles = append(Articles[:index], Articles[index+1:]...)
-
 			reqBody, _ := ioutil.ReadAll(r.Body)
 			var article Article
 			json.Unmarshal(reqBody, &article)
