@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
+	"io/ioutil"
 	"log"
 	"net/http"
 )
@@ -41,10 +42,20 @@ func singleArticle(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+
+func createArticle(w http.ResponseWriter, r *http.Request) {
+	reqBody, _ := ioutil.ReadAll(r.Body)
+	var article Article
+	json.Unmarshal(reqBody, &article)
+	Articles = append(Articles, article)
+	json.NewEncoder(w).Encode(article)
+}
+
 func handleRequests() {
 	myRouter := mux.NewRouter().StrictSlash(true)
 	myRouter.HandleFunc("/", homePage)
 	myRouter.HandleFunc("/articles", allArticles)
+	myRouter.HandleFunc("/article", createArticle).Methods("POST")
 	myRouter.HandleFunc("/article/{id}", singleArticle)
 	log.Fatal(http.ListenAndServe(":5000", myRouter))
 }
